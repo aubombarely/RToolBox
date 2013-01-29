@@ -1,0 +1,51 @@
+update_go <- function(x) { 
+	
+	y = x; 
+	
+	for (i in 1:length(as.vector(x$GeneID))) { 
+	
+		z = as.vector(x$GOID)[i]; 
+		
+		if (is.null(GOTERM[[z]])) { 
+
+			if (is.null(GOOBSOLETE[[z]])) { 
+	
+				if (is.null(GOSYNONYM[[z]])) { 
+	
+					y$GOID[i] = NA; 
+
+				} 
+				else { 
+
+					g = GOID(GOSYNONYM[[z]]); 
+					y$GOID[i] = g; 
+				} 
+			} 
+			else { 
+	
+				y$GOID[i] = NA;  
+			} 
+		} 
+		else { 
+	
+			y$GOID[i] = x; 
+		} 
+	};
+	
+	return(y); 
+}
+
+gosubset <- function(x, y) {
+
+	empgoframe = data.frame(row.names=c("GeneID", "Ontology", "Evidence", "GOID"));   
+
+	for(i in 1:length(x)) { 
+
+		g = x[i];
+                empgoframe = rbind(empgoframe, y[grep(g, y$GeneID), c("GeneID", "Ontology", "Evidence", "GOID")]); 
+	}
+
+	row.names(empgoframe) = c(1:length(as.vector(empgoframe$GeneID)));	
+	
+	return(empgoframe);
+}
